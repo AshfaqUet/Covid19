@@ -1,0 +1,5 @@
+ONLINE_SERVER_ERROR = "Online Server Error"
+COUNTRIES_FETCHED_SUCCESSFULLY = "Countries Fetched successfully from online server"
+PROVINCES_FETCHED_SUCCESSFULLY = "Provinces Fetched successfully from online server"
+REPORTS_FETCHED_SUCCESSFULLY = "Reports Fetched successfully from online server"
+INVALID_PAYLOAD = "Payload invalid"

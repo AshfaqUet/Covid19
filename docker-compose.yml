@@ -1,0 +1,19 @@
+version: '2'
+services:
+
+  covidwebdb:
+    image: mysql:5.7.8
+    container_name: covidwebdb
+    environment:
+      MYSQL_DATABASE: coviddb
+      MYSQL_USER: webuser
+      MYSQL_PASSWORD: admin123
+      MYSQL_ROOT_PASSWORD: admin123
+    volumes:
+      - .data/webdb:/var/lib/mysql
+  covidweb:
+    build: .
+    container_name: covidweb
+    ports:
+      - 5000:5000
+
