@@ -19,6 +19,6 @@ class CovidDatabase:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class CovidWeb(CovidDatabase):
-    PORT = 5000
-    HOST = os.environ.get("HOST", "http://0.0.0.0")
+    PORT = os.environ.get("PORT",5000)
+    HOST = os.environ.get("HOST", 'http://0.0.0.0')
     DEBUG = False
