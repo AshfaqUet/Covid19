@@ -1,17 +1,51 @@
-from covid19.models.covid19_models import *
+from covid19.models.covid19_models import Country, Province, Report
+from covid19 import db
 import json
+
+
+def get_all_country():              # return data of all the countries in json string format
+    """
+    get and return all countries from local db
+    :return: all countries from local db in json string formate
+    """
+    countries = db.session.query(Country).all()
+    list_of_countries = list()
+    for country in countries:
+        list_of_countries.append(country.to_json())
+    return json.dumps(list_of_countries)
+
+
+def get_all_province():
+    provinces = db.session.query(Province).all()
+    list_of_provinces = list()
+    for province in provinces:
+        list_of_provinces.append(province.to_json())
+    return json.dumps(list_of_provinces)
+
+
+def get_all_reports():
+    reports = db.session.query(Report).all()
+    list_of_reports = list()
+    for report in reports:
+        list_of_reports.append(report.to_json())
+    return json.dumps(list_of_reports, default=str)
 
 
 class CountryService:                        # CRUD Operations of Country
     def __init__(self):
         self.country = Country()
 
-    def get_all_country(self):
-        countries = db.session.query(Country).all()
-        list_of_countries = list()
-        for country in countries:
-            list_of_countries.append(country.to_json())
-        return json.dumps(list_of_countries)
+    def get_country_by_name(self,name):
+        """
+        Search country in the database by using name of the country
+        :param name: country name
+        :return: whole country information in json string format
+        """
+        self.country = db.session.query(Country).filter_by(name=name).first()
+        if not self.country:
+            return {'error': 'data not found'}
+        else:
+            return self.country.to_json()
 
     def get_country(self, country_id):
         self.country = db.session.query(Country).filter_by(id=country_id).first()
@@ -21,6 +55,11 @@ class CountryService:                        # CRUD Operations of Country
             return self.country.to_json()
 
     def add_new_country(self, country_info):
+        """
+        Get country information in a dictionary and store it in db
+        :param country_info: dictionary variable to store info in the db
+        :return: same data which want to enter in the db in json
+        """
         self.country = Country(
             iso=country_info['iso'], name=country_info['name']
         )
@@ -29,6 +68,12 @@ class CountryService:                        # CRUD Operations of Country
         return self.country.to_json()
 
     def update_country(self, country_info, country_id):
+        """
+
+        :param country_info: dictionary to get new information for updation
+        :param country_id: to indentify that which country i have to update
+        :return: country info after updation
+        """
         self.country = db.session.query(Country).filter_by(id=country_id).first()
         if not self.country:
             return {'error': 'device not found'}
@@ -41,6 +86,13 @@ class CountryService:                        # CRUD Operations of Country
             return self.country.to_json()
 
     def delete_country(self, country_id):
+        """
+        delete country
+        :param country_id: to delete from db
+        :return: country info after deletion in the json format
+
+        Foreign key not handled in it
+        """
         self.country = db.session.query(Country).get(country_id)
         if not self.country:
             return {'error': 'data not found'}
@@ -53,8 +105,14 @@ class ProvinceService:                        # CRUD Operations of Country
     def __init__(self):
         self.province = Province()
 
-    def get_id(self,province,lat,long):
-        self.province=db.session.query(Province).filter_by(province=province,lat=lat,long=long).first()
+    def get_province_by_name(self, province):
+        self.province = db.session.query(Province).filter_by(province=province).first()
+        if not self.province:
+            return False
+        return self.province.id
+
+    def get_id(self, province, lat, long):
+        self.province = db.session.query(Province).filter_by(province=province,lat=lat,long=long).first()
         if not self.province:
             return False
         return self.province.id
@@ -68,7 +126,8 @@ class ProvinceService:                        # CRUD Operations of Country
 
     def add_new_province(self, province_info, country_id):
         self.province = Province(
-            province=province_info['province'], lat=province_info['lat'], long=province_info['long'],country_id=country_id
+            province=province_info['province'], lat=province_info['lat'],
+            long=province_info['long'],country_id=country_id
         )
         db.session.add(self.province)  # Enter data one by one on db
         db.session.commit()

@@ -1,23 +1,47 @@
 from covid19.covid_api import covid_api
-import requests
-from covid19.models.covid19_models import Country, Province, Report
-from flask import Response, request
-from covid19.covid_api.const import *
+from covid19.covid_api.crud.covid19 import CountryService, ProvinceService, ReportService, get_all_province, \
+    get_all_reports, get_all_country
 import json
-from covid19.covid_api.crud.covid19 import *
 
-@covid_api.route('/get/countries', methods=['GET'])
+@covid_api.route('/countries', methods=['GET'])
 def get_countries():
-    country_service = CountryService()
-    result = country_service.get_all_country()
-    print("Here type is ",type(result))
+    """
+    Get all the countries from local database and return
+    :return: all the countries exist in the local database
+    """
+    result = get_all_country()
+    return result
 
-    if type(result) is str:
-        return result
-    else:
-        return {"message":"Allah knows better than me, Allah help me"}
-    # resp = requests.get('https://covid-api.com/api/regions')  # hitting online server to get data
-    # if resp.status_code != 200:
-    #     # This means something went wrong.
-    #     return Response(ONLINE_SERVER_ERROR, resp.status_code)
-    # return Response(json.dumps(resp.json()['data']), 200)
+
+@covid_api.route('/provinces', methods=['GET'])
+def get_provinces():
+    """
+    Get all the provinces form the local database and return
+    :return: all the provinces exist in the local database along with their countries
+    """
+    result = get_all_province()
+    provinces = json.loads(result)
+    list_of_provinces = list()
+    for province in provinces:
+        country_service = CountryService()
+        country=country_service.get_country(province['country'])
+        province['country'] = country
+        list_of_provinces.append(province)
+    return json.dumps(list_of_provinces)
+
+
+@covid_api.route('/reports', methods=['GET'])
+def get_reports():
+    """
+    Get all the reports from local db and return along with its provinces
+    :return: all the reports from local db and return along with its provinces
+    """
+    result = get_all_reports()
+    reports = json.loads(result)
+    list_of_reports = list()
+    for report in reports:
+        province_service = ProvinceService()
+        province = province_service.get_province(report['province'])
+        report['province'] = province
+        list_of_reports.append(report)
+    return json.dumps(list_of_reports)
