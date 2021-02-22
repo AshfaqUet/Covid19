@@ -4,24 +4,26 @@ from sqlalchemy.orm import relationship
 import datetime
 import uuid
 
+
 class Country(db.Model):
     id = Column(String(32), primary_key=True)
     name = Column(String(255), nullable=False, unique=True)
     iso = Column(String(32), nullable=False)
 
     __tablename__ = "country"
+
     # relationships
     province = relationship("Province", backref="country", lazy="dynamic")
 
-    def __init__(self,iso=None, name=None):
-        self.id=str(uuid.uuid4().hex)
+    def __init__(self, iso=None, name=None):
+        self.id = str(uuid.uuid4().hex)
         self.iso = iso
         self.name = name
 
     def to_json(self):
         return {
-            'iso':self.iso,
-            'name':self.name
+            'iso': self.iso,
+            'name': self.name
         }
 
 
@@ -32,13 +34,14 @@ class Province(db.Model):
     long = Column(String(32))
 
     __tablename__ = 'province'
+
     # relationships
     country_id = Column(String(32), ForeignKey('country.id'), nullable=False)
 
     # relationship with report
     report = relationship("Report", backref="province", lazy="dynamic")
 
-    def __init__(self, province=None, lat=None, long=None,country_id=None):
+    def __init__(self, province=None, lat=None, long=None, country_id=None):
         self.id = str(uuid.uuid4().hex)
         self.province = province
         self.lat = lat
@@ -48,12 +51,13 @@ class Province(db.Model):
 
     def to_json(self):
         return {
-            'id':self.id,
-            'province':self.province,
-            'lat':self.lat,
-            'long':self.long,
-            'country_id':self.country_id
+            'id': self.id,
+            'province': self.province,
+            'lat': self.lat,
+            'long': self.long,
+            'country': self.country_id
         }
+
 
 class Report(db.Model):
     id = Column(String(32), primary_key=True)
@@ -74,8 +78,9 @@ class Report(db.Model):
     province_id = Column(String(32), ForeignKey('province.id'), nullable=False)
 
     def __init__(self, date=None, confirmed=None, deaths=None, recovered=None, confirmed_diff=None, deaths_diff=None,
-                 recovered_diff=None, last_update=None,active=None, active_diff=None, fatality_rate=None, province_id=None):
-        self.id= str(uuid.uuid4().hex)
+                 recovered_diff=None, last_update=None, active=None, active_diff=None, fatality_rate=None,
+                 province_id=None):
+        self.id = str(uuid.uuid4().hex)
         self.date = date
         self.confirmed = confirmed
         self.deaths = deaths
@@ -92,18 +97,18 @@ class Report(db.Model):
 
     def to_json(self):
         return {
-            'id':self.id,
-            'date':self.date,
-            'confirmed':self.confirmed,
-            'deaths':self.deaths,
-            'recovered':self.recovered,
-            'confirmed_diff':self.confirmed_diff,
-            'deaths_diff':self.deaths_diff,
-            'recovered_diff':self.recovered_diff,
-            'last_update':self.last_update,
-            'active':self.active,
-            'active_diff':self.active_diff,
-            'fatality_rate':self.fatality_rate,
+            'id': self.id,
+            'date': self.date,
+            'confirmed': self.confirmed,
+            'deaths': self.deaths,
+            'recovered': self.recovered,
+            'confirmed_diff': self.confirmed_diff,
+            'deaths_diff': self.deaths_diff,
+            'recovered_diff': self.recovered_diff,
+            'last_update': self.last_update,
+            'active': self.active,
+            'active_diff': self.active_diff,
+            'fatality_rate': self.fatality_rate,
 
-            'province_id':self.province_id
+            'province': self.province_id
         }

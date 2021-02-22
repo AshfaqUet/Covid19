@@ -1,6 +1,8 @@
 import os
+
 class CovidDatabase:
-    COVID_DBPARAMS = {
+    COVID_DBPARAMS = {          # Docker-compose config
+
         "WEBDB_ENV_MYSQL_DB_HOST": os.environ.get("WEBDB_ENV_MYSQL_DB_HOST", "covidwebdb"),
         "WEBDB_ENV_MYSQL_PORT": os.environ.get("WEBDB_ENV_MYSQL_PORT", "3306"),
         "WEBDB_ENV_MYSQL_DATABASE": os.environ.get(
@@ -11,6 +13,18 @@ class CovidDatabase:
             "WEBDB_ENV_MYSQL_PASSWORD", "admin123"
         ),
     }
+    # COVID_DBPARAMS = {        # local config
+    #
+    #     "WEBDB_ENV_MYSQL_DB_HOST": os.environ.get("WEBDB_ENV_MYSQL_DB_HOST", "localhost"),
+    #     "WEBDB_ENV_MYSQL_PORT": os.environ.get("WEBDB_ENV_MYSQL_PORT", "3306"),
+    #     "WEBDB_ENV_MYSQL_DATABASE": os.environ.get(
+    #         "WEBDB_ENV_MYSQL_DATABASE", "coviddb"
+    #     ),
+    #     "WEBDB_ENV_MYSQL_USER": os.environ.get("WEBDB_ENV_MYSQL_USER", "root"),
+    #     "WEBDB_ENV_MYSQL_PASSWORD": os.environ.get(
+    #         "WEBDB_ENV_MYSQL_PASSWORD", "bismillah"
+    #     ),
+    # }
     SQLALCHEMY_DATABASE_URI = (
         "mysql+pymysql://{WEBDB_ENV_MYSQL_USER}:{WEBDB_ENV_MYSQL_PASSWORD}@"
         "{WEBDB_ENV_MYSQL_DB_HOST}:{WEBDB_ENV_MYSQL_PORT}/"
